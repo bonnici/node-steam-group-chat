@@ -1,0 +1,5 @@
+logs/*
+!.gitkeep
+node_modules
+server/config.js
+sentry

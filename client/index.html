@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="en" data-ng-app="steamGroupChatProxy"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" data-ng-app="steamGroupChatProxy"> <!--<![endif]-->
+
+<head>
+	<meta charset="utf-8" />
+	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+	<title>Steam Group Chat</title>
+
+	<link rel="stylesheet" href="css/foundation.min.css" />  
+	<link rel="stylesheet" href="css/app.css"/>
+
+	<script src="js/vendor/custom.modernizr.js"></script>
+</head>
+
+<body data-ng-controller="ChatRoomCtrl">
+
+	<nav id="top-bar" class="top-bar" data-options="is_hover:false">
+		<ul class="title-area">
+			<li class="name"><h1 class="title-name">Steam Group Chat</h1></li>
+			<li class="toggle-topbar menu-icon"><a href="#" onclick="onMenuClick()"><span>Menu</span></a></li>
+		</ul>
+
+		<section class="top-bar-section">
+			<ul class="right">
+				<li class="username">
+					<img data-ng-src="{{ model.user.avatarUrl }}"> <span data-ng-bind="model.user.username" />
+				</li>
+				<li class="divider"></li>
+				<li><a href="logout">Logout</a></li>
+			</ul>
+		</section>
+	</nav>
+
+	<div class="main">
+
+		<!-- this div contains the chat area and user details displayed side-by-side on large displays -->
+		<div class="chat-row row hide-for-small">
+
+			<div data-scroll-glue class="large-9 columns chat-messages full-height">
+				<p data-ng-repeat="message in model.chatHistory" data-chat-message />
+			</div>
+
+			<div class="large-3 columns full-height chat-members-div">
+				<div class="row full-height">
+					<div class="small-11 small-offset-1 columns chat-members full-height">
+						<div data-ng-repeat="user in model.websiteUserDetails" data-user-details data-state="In Website" data-responsive></div>
+						<div data-ng-repeat="user in model.memberDetails" data-ng-class="user.gameName ? 'ingame' : ''" data-user-details data-responsive></div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<!-- this div contains either the chat area or the user details on small displays -->
+		<div id="chat-row-small" class="chat-row row show-for-small">
+
+			<div data-scroll-glue class="columns chat-messages full-height">
+				<p data-ng-repeat="message in model.chatHistory" data-chat-message />
+			</div>
+
+			<div class="columns full-height chat-members-div columns chat-members full-height" style="display:none;">
+				<div data-ng-repeat="user in model.websiteUserDetails" data-user-details data-state="In Website"></div>
+				<div data-ng-repeat="user in model.memberDetails" data-ng-class="user.gameName ? 'ingame' : ''" data-user-details></div>
+			</div>
+
+		</div>
+
+		<div id="input-row" class="row collapse">
+			<form>
+				<div class="small-10 large-11 columns">
+					<textarea rows="2" style="resize: none;" data-ng-model="model.newMessage" data-ng-keypress="sendMessageOrNewline($event)"></textarea>
+				</div>
+				<div class="large-1 columns hide-for-small send-large"><a href="#" data-ng-click="sendMessage()" class="button small radius">SEND</a></div>
+				<div class="small-2 columns show-for-small send-small"><a href="#" data-ng-click="sendMessage()" class="button small radius">SEND</a></div>
+			</form>
+		</div>
+
+		<div id="chat-member-button-row" class="row show-for-small">
+			<div class="small-12 columns"><a href="#" id="chat-members-button" class="small button radius">Chat Members</a></div>
+		</div>
+
+		<div id="footer-row" class="row">
+			<div class="small-12 columns"><a href="http://steampowered.com" target="_blank">Powered by Steam</a></div>
+		</div>
+
+	</div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+	<!--
+	<script src="lib/angular/angular.js"></script>
+	-->
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="js/app.js"></script>
+	<script src="js/services.js"></script>
+	<script src="js/controllers.js"></script>
+	<script src="js/filters.js"></script>
+	<script src="js/directives.js"></script>
+	<script src="js/scrollglue.js"></script>
+
+	<script>
+		document.write('<script src=' +
+		('__proto__' in {} ? 'js/vendor/zepto' : 'js/vendor/jquery') +
+		'.js><\/script>')
+	</script>
+
+	<script src="js/foundation.min.js"></script>
+	<!--
+	<script src="js/foundation/foundation.js"></script>
+	<script src="js/foundation/foundation.alerts.js"></script>
+	<script src="js/foundation/foundation.clearing.js"></script>
+	<script src="js/foundation/foundation.cookie.js"></script>
+	<script src="js/foundation/foundation.dropdown.js"></script>
+	<script src="js/foundation/foundation.forms.js"></script>
+	<script src="js/foundation/foundation.interchange.js"></script>
+	<script src="js/foundation/foundation.joyride.js"></script>
+	<script src="js/foundation/foundation.magellan.js"></script>
+	<script src="js/foundation/foundation.orbit.js"></script>
+	<script src="js/foundation/foundation.placeholder.js"></script>
+	<script src="js/foundation/foundation.reveal.js"></script>
+	<script src="js/foundation/foundation.section.js"></script>
+	<script src="js/foundation/foundation.tooltips.js"></script>
+	<script src="js/foundation/foundation.topbar.js"></script>
+	-->
+
+	<script>
+		$(document).foundation().foundation('reveal', { closeOnBackgroundClick: false, closeOnEsc: false, animation: "none", animationSpeed: 150 });
+
+		var resizeChat = function() {
+			var windowHeight = $(window).height();
+			var topbarHeight = $('#top-bar').height();
+			var inputHeight = $('#input-row').height();
+			var memberButtonHeight = $('#chat-member-button-row').height();
+			var footerHeight = $('#footer-row').height();
+			var padding = 40;
+
+			var chatHeight = windowHeight - topbarHeight - inputHeight - memberButtonHeight - footerHeight - padding;
+			chatHeight = Math.max(chatHeight, 200);
+
+			$(".chat-row").css('height', chatHeight);
+		};
+
+		var onMenuClick = function() { setTimeout(resizeChat, 10); };
+
+		$('#chat-members-button').click(function(e) {
+			e.preventDefault();
+
+			if ($('#chat-row-small .chat-members-div').is(":visible")) {
+				$('#chat-members-button').text("Chat Members");
+				$('#chat-row-small .chat-members-div').stop().fadeOut(75, function() {
+					$('#chat-row-small .chat-messages').stop().fadeIn(100);
+				});
+			}
+			else {
+				$('#chat-members-button').text("Chat Messages");
+				$('#chat-row-small .chat-messages').stop().fadeOut(75, function() {
+					$('#chat-row-small .chat-members-div').stop().fadeIn(100);
+				});
+			}
+		});
+
+		$(function() {
+			$('#bad-status-modal').foundation('reveal', 'open');
+			resizeChat();
+			$(window).resize(resizeChat);
+		});
+	</script>
+
+	<div id="bad-status-modal" class="reveal-modal">
+		<p><span data-ng-bind="model.statusMessage">Please wait...</span></p>
+		<p><a href="/steamauth"><img src="http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_large_border.png"></a></p>
+	</div>
+
+	<div id="proxy-user-status-modal" class="reveal-modal">
+		<p><span data-ng-bind="model.proxyUserStatusMessage"></span></p>
+	</div>
+
+</body>
+</html>
