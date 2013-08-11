@@ -1,6 +1,8 @@
 {
     "name": "steam-group-chat"
   , "version": "0.0.1"
+  , "description": "Web-based Steam group chat interface"
+  , "author": "bonnici <lljksteveholt@gmail.com>"
   , "private": true
   , "dependencies": {
       "express": "3.2.x"
