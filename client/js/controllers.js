@@ -3,6 +3,7 @@
 angular.module('steamGroupChatProxy.controllers', []).
 
 	controller('ChatRoomCtrl', ['$scope', 'socket', function($scope, socket) {
+
 		$scope.model = { 
 			chatHistory: [], 
 			memberDetails: {},

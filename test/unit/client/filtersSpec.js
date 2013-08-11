@@ -41,4 +41,42 @@ describe('filter', function() {
 			expect(steamProfileFilter('steamId', 'username')).toEqual('<a href="http://steamcommunity.com/profiles/steamId" target="chatProxyProfile">username</a>');
 		}));
 	});
+
+	describe('sortUsers', function() {
+		it('should sort users with identical statuses by case insensitive name', inject(function(sortUsersFilter) {
+			var users = {
+				'steamId1': { playerName: 'a' },
+				'steamId2': { playerName: 'C' },
+				'steamId3': { playerName: 'b' },
+				'steamId4': { playerName: 'ca' },
+				'steamId5': { playerName: '1' }
+			};
+			var sorted = sortUsersFilter(users);
+
+			expect(sorted.length).toEqual(5);
+			expect(sorted[0].playerName).toEqual('1');
+			expect(sorted[1].playerName).toEqual('a');
+			expect(sorted[2].playerName).toEqual('b');
+			expect(sorted[3].playerName).toEqual('C');
+			expect(sorted[4].playerName).toEqual('ca');
+		}));
+
+		it('should sort in-game users before users not in game then alphabetically', inject(function(sortUsersFilter) {
+			var users = {
+				'steamId1': { playerName: 'a' },
+				'steamId2': { playerName: 'C', gameName: '' },
+				'steamId3': { playerName: 'b', gameName: 'Something' },
+				'steamId4': { playerName: 'ca', gameName: 'Something' },
+				'steamId5': { playerName: '1', gameName: null }
+			};
+			var sorted = sortUsersFilter(users);
+
+			expect(sorted.length).toEqual(5);
+			expect(sorted[0].playerName).toEqual('b');
+			expect(sorted[1].playerName).toEqual('ca');
+			expect(sorted[2].playerName).toEqual('1');
+			expect(sorted[3].playerName).toEqual('a');
+			expect(sorted[4].playerName).toEqual('C');
+		}));
+	});
 });

@@ -54,4 +54,13 @@ angular.module('steamGroupChatProxy.filters', []).
 		return function(steamId, username) {
 			return '<a href="http://steamcommunity.com/profiles/' + steamId + '" target="chatProxyProfile">' + username + '</a>';
 		}
+	})
+	
+	.filter('sortUsers', function() {
+		return function(users) {
+			var inGame = _.filter(users, function(user) { return user.gameName; });
+			var notInGame = _.filter(users, function(user) { return !(user.gameName); });
+			var sort = function(user) { return user.playerName.toLowerCase(); };
+			return _.sortBy(inGame, sort).concat(_.sortBy(notInGame, sort));
+		}
 	});

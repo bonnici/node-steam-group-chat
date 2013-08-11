@@ -12,6 +12,7 @@ body { background-color: #383635; }
 	border: 1px solid #4D4B48; 
 	padding: 0.4em;
 	overflow-y: auto; 
+	word-wrap: break-word;
 	background: rgb(47,46,45); /* Old browsers */
 	background: -moz-linear-gradient(top,  rgb(47,46,45) 0%, rgb(55,53,52) 3%, rgb(23,22,20) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(47,46,45)), color-stop(3%,rgb(55,53,52)), color-stop(100%,rgb(23,22,20))); /* Chrome,Safari4+ */
@@ -26,6 +27,20 @@ body { background-color: #383635; }
 	overflow-y: auto;
 	overflow-x: hidden;
 	padding: 5px;
+}
+.chat-member-separator {
+	text-transform: uppercase;
+	font-size: 9pt;
+	padding: 4px;
+	margin-bottom: 6px;
+	color: #D1CFCD;
+	background: rgb(90,90,90); /* Old browsers */
+	background: -moz-linear-gradient(left, rgb(90,90,90) 0%, rgb(56,54,53) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgb(90,90,90)), color-stop(100%,rgb(56,54,53))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, rgb(90,90,90) 0%,rgb(56,54,53) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left, rgb(90,90,90) 0%,rgb(56,54,53) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left, rgb(90,90,90) 0%,rgb(56,54,53) 100%); /* IE10+ */
+	background: linear-gradient(to right, rgb(90,90,90) 0%,rgb(56,54,53) 100%); /* W3C */
 }
 .full-height {
 	height: 100%;
